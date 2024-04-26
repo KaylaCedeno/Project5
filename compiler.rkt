@@ -25,14 +25,6 @@
 ;; Once we have assembly code (in this case NASM assembly), we then
 ;; use a standard assembler / linker.
 
-;; Stage 1: High-level language: IfArith
-;;
-;; Our high-level language will be IfArith--it has the obvious
-;; semantics we have written several times before; the interpretation
-;; is not the interesting part here. The only interesting thing to
-;; note is that true is "anything but zero," and false is "exactly
-;; zero."
-
 ;; Here are our primitive operators--notice that we don't include
 ;; =. Our notion of true will be "anything except for 0." Our notion
 ;; of false will be "exactly zero." We can get here by using
@@ -48,12 +40,7 @@
     ['false #t]
     [_ #f]))
 
-;; IfArith is a tiny (sub-Turing) language we've seen several times
-;; throughout the course. We will compile IfArith to x86, by way of
-;; several steps. Our language is intentionally tiny: project 4 showed
-;; us we can compile to the lambda calculus, now we show how to
-;; compile a (much less expressive) language all the way down to
-;; assembly code.
+
 (define (ifarith? e)
   (match e
     ;; literals
@@ -78,11 +65,7 @@
             [else ,(? ifarith? else-body)]) #t]
     [_ #f]))
 
-;; Stage 2: IfArith-Tiny
-;; 
-;; Now we'll observe that many of the forms in ifarith? can be written
-;; in terms of other forms. This is like the desugaring we did in p4:
-;; we just eliminate some forms by using existing forms. For example,
+
 ;; let* can be written as a sequence of single-binding lets (notice we
 ;; change let* to let). Similarly, forms for and/or/cond can be
 ;; compiled to usages of `if`.
@@ -107,11 +90,6 @@
     [`(if ,(? ifarith? e0) ,(? ifarith? e1) ,(? ifarith? e2)) #t]
     [_ #f]))
 
-
-;; Translator: IfArith |--> IfArith-Tiny
-;; Convert everything to
-;; direct-style applications of builtins, along with let, print, and
-;; if.
 (define (ifarith->ifarith-tiny e)
   (match e
     ;; literals
